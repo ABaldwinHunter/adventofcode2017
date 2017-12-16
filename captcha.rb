@@ -1,22 +1,26 @@
 def captcha(num)
   nums = num.to_s.split("").map(&:to_i)
-  first = nums[0]
-  last = nums[0]
+  sum = 0
 
-  repeats = []
-
-  nums.each_with_index do |n, i|
-    if i == 0
-      # do nothing
-    elsif n == last
-      repeats << last
+  for i in 0..(nums.length - 1)
+    if (i == nums.length - 1) && nums[i] == nums[0]
+      sum += nums[i]
+    elsif nums[i] == nums[i+1]
+      sum += nums[i]
     end
-    last = n
   end
+end
 
-  if last == first
-    repeats << last
+def captcha(num)
+  nums = num.to_s.split("").map(&:to_i)
+  halfway = nums.length / 2
+  sum = 0
+
+  for i in 0..(nums.length - 1)
+    if (i == nums.length - 1) && nums[i] == nums[0]
+      sum += nums[i]
+    elsif nums[i] == nums[i+1]
+      sum += nums[i]
+    end
   end
-
-  repeats.inject(:+)
 end
