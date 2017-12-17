@@ -26,21 +26,30 @@
 def process(num)
   return 0 if num == 1
 
-  vertical_distance = nil
-  horizontal_distance = nil
+  # smallest_bigger_square_root
+  root = Math.sqrt(num).ceil
 
-  smallest_bigger_square_root = Math.sqrt(num).ceil
-  row_middle = smallest_bigger_square_root**2 - (smallest_bigger_square_root / 2)
-
-  if smallest_bigger_square_root % 2 == 0
-    vertical_distance = (smallest_bigger_square_root / 2 - 1)
-    horizontal_distance = (num - row_middle).abs + 1
-  else
-    vertical_distance = smallest_bigger_square_root / 2
-    horizontal_distance = (num - row_middle).abs
+  if root % 2 == 0
+    # must be nearest odd square root ring
+    root += 1
   end
 
-  vertical_distance + horizontal_distance
+  depth_distance = root / 2
+
+  square = root**2
+
+  centers = [
+    square - root / 2,
+    square - ((root / 2) * 3),
+    square - ((root / 2) * 5),
+    square - ((root / 2) * 7),
+  ]
+
+  distances = centers.map { |cent| (num - cent).abs }
+
+  rotation_distance = distances.min
+
+  depth_distance + rotation_distance
 end
 
 require 'pry'; binding.pry
