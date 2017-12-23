@@ -32,33 +32,31 @@ class Builder
   end
 
   def build
-    current = Cell.new(start[0], start[1], 1)
+    current = Cell.new(start[0], start[1], grid)
     grid.cells << current
-    
-    10.times do
-    end
-
-
-
-
-
   end
 end
 
 class Grid
+  attr_accessor :cells
+
   def initialize
     @cells = []
   end
 
-  def get_value(x, y)
-    if (cell = get_cell(x, y))
+  def any_cell_bigger?(value)
+    cells.map(&:value).sort.last > value
+  end
+
+  def value(coordinates)
+    if (cell = cell(coordinates))
       cell.value
     else
       0
     end
   end
 
-  def get_cell(coordinates)
+  def cell(coordinates)
     x = coordinates[0]
     y = coordinates[1]
 
@@ -66,19 +64,34 @@ class Grid
       cell.x == x && cell.y == y
     }
   end
+
+  def print
+  end
 end
 
 class Cell
-  attr_reader :x, :y
-  attr_accessor :value
+  attr_reader :x, :y, :value
 
-  def initialize(x, y, value = 0)
+  def initialize(x, y, grid)
     @x = x
     @y = y
-    @value = value
+    @grid = grid
+
+    calculate_value
   end
 
-  def calulate_value
+  def calculate_value
+    if grid.cells.empty?
+      @value = 1
+    else
+      @value = sum_neighbors
+    end
+  end
+
+  def sum_neighbors
+    neighbor_coordinates.map { |co|
+      grid.value(co)
+    }.inject(:+)
   end
 
   def neighbor_coordinates
@@ -89,4 +102,13 @@ class Cell
       [x + 1, y],
     ]
   end
+
+  private
+
+  attr_reader :grid
 end
+
+grid = Grid.new
+cell = Cell.new(0, 0, grid)
+
+require 'pry'; binding.pry
