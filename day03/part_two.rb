@@ -23,17 +23,104 @@
 # Your puzzle input is still 347991.
 
 class Builder
-  attr_accessor :grid
-  attr_reader :start
+  # builds a spiral grid following puzzle
+  NORTH = [0, 1]
+  SOUTH = [0, -1]
+  EAST = [1, 0]
+  WEST = [-1, 0]
+  
+  attr_accessor :grid, :current_cell, :current_direction, :current_coordinates
 
-  def initialize
-    @start = [0,0]
+  def initialize(num)
     @grid = Grid.new
+    @current_coordinates = [0, 0]
+    @current_direction = EAST # start out going East
+    @stopping = num
+
+    add_cell
+    print_progress
   end
 
   def build
-    current = Cell.new(start[0], start[1], grid)
-    grid.cells << current
+    while current_cell.value < stopping
+      move
+      add_cell
+      print_progress
+    end
+
+    puts "*"*80
+    puts "Done!"
+  end
+
+  def move
+    if at_corner?
+      change_direction
+    end
+
+    step_forward
+  end
+
+  private
+
+  attr_reader :stopping
+
+  def print_progress
+    puts "number of cells is #{grid.cells.count}"
+    puts "current coordinates are #{current_coordinates}"
+    puts "current value of cell is #{current_cell.value}"
+  end
+
+  def add_cell
+    @current_cell = Cell.new(current_coordinates, grid)
+    grid.cells << @current_cell
+  end
+
+  def step_forward
+    current_coordinates[0] += current_direction[0]
+    current_coordinates[1] += current_direction[1]
+  end
+
+  def change_direction
+    current_direction = next_counter_clockwise
+  end
+
+    def next_counter_clockwise
+      {
+        EAST => NORTH,
+        NORTH => WEST,
+        WEST => SOUTH,
+        SOUTH => EAST,
+      }.fetch(current_direction)
+    end
+
+  def at_corner?
+    corners_in_current_ring.include? position
+  end
+
+
+  def position
+    grid.cells.count
+  end
+
+  def corners_in_current_ring(num = position)
+    return [1] if position == 1
+
+    # smallest_bigger_square_root
+    root = Math.sqrt(num).ceil
+
+    if root % 2 == 0
+      # must be nearest odd square root ring
+      root += 1
+    end
+
+    square = root**2
+
+    corners = [
+      square,
+      square - root / 2 - 1,
+      square - (root / 2) * 3 - 1,
+      square - (root / 2) * 5 - 1,
+    ]
   end
 end
 
@@ -42,10 +129,6 @@ class Grid
 
   def initialize
     @cells = []
-  end
-
-  def any_cell_bigger?(value)
-    cells.map(&:value).sort.last > value
   end
 
   def value(coordinates)
@@ -72,9 +155,9 @@ end
 class Cell
   attr_reader :x, :y, :value
 
-  def initialize(x, y, grid)
-    @x = x
-    @y = y
+  def initialize(coordinates, grid)
+    @x = coordinates[0]
+    @y = coordinates[1]
     @grid = grid
 
     calculate_value
@@ -108,7 +191,6 @@ class Cell
   attr_reader :grid
 end
 
-grid = Grid.new
-cell = Cell.new(0, 0, grid)
+builder = Builder.new(40)
 
 require 'pry'; binding.pry
