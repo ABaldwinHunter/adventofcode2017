@@ -1,4 +1,5 @@
-# 
+require_relative "./grid.rb"
+require_relative "./cell.rb"
 #
 # --- Part Two ---
 
@@ -42,7 +43,7 @@ class Builder
   end
 
   def build
-    while current_cell.value < stopping
+    while current_cell.value < stopping && position < 20
       move
       add_cell
       print_progress
@@ -54,6 +55,7 @@ class Builder
 
   def move
     if at_corner?
+      puts "*"*900
       change_direction
     end
 
@@ -68,6 +70,8 @@ class Builder
     puts "number of cells is #{grid.cells.count}"
     puts "current coordinates are #{current_coordinates}"
     puts "current value of cell is #{current_cell.value}"
+    puts "grid cells:\n"
+    puts grid.cells.inspect
   end
 
   def add_cell
@@ -93,8 +97,10 @@ class Builder
       }.fetch(current_direction)
     end
 
-  def at_corner?
-    corners_in_current_ring.include? position
+  def at_corner?(num = position)
+    puts "position is #{num}"
+    puts "corners in current ring: #{corners_in_current_ring(num)}"
+    corners_in_current_ring(num).include? num && num != 1
   end
 
 
@@ -102,8 +108,8 @@ class Builder
     grid.cells.count
   end
 
-  def corners_in_current_ring(num = position)
-    return [1] if position == 1
+  def corners_in_current_ring(num)
+    return [1] if num == 1
 
     # smallest_bigger_square_root
     root = Math.sqrt(num).ceil
@@ -122,73 +128,6 @@ class Builder
       square - (root / 2) * 5 - 1,
     ]
   end
-end
-
-class Grid
-  attr_accessor :cells
-
-  def initialize
-    @cells = []
-  end
-
-  def value(coordinates)
-    if (cell = cell(coordinates))
-      cell.value
-    else
-      0
-    end
-  end
-
-  def cell(coordinates)
-    x = coordinates[0]
-    y = coordinates[1]
-
-    cell.select { |cell|
-      cell.x == x && cell.y == y
-    }
-  end
-
-  def print
-  end
-end
-
-class Cell
-  attr_reader :x, :y, :value
-
-  def initialize(coordinates, grid)
-    @x = coordinates[0]
-    @y = coordinates[1]
-    @grid = grid
-
-    calculate_value
-  end
-
-  def calculate_value
-    if grid.cells.empty?
-      @value = 1
-    else
-      @value = sum_neighbors
-    end
-  end
-
-  def sum_neighbors
-    neighbor_coordinates.map { |co|
-      grid.value(co)
-    }.inject(:+)
-  end
-
-  def neighbor_coordinates
-    [
-      [x, y + 1],
-      [x, y - 1],
-      [x - 1, y],
-      [x + 1, y],
-    ]
-  end
-
-  private
-
-  attr_reader :grid
 end
 
 builder = Builder.new(40)
