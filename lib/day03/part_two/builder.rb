@@ -99,7 +99,7 @@ class Builder
   def at_corner?(num = position)
     puts "position is #{num}"
     puts "corners in current ring: #{corners_in_current_ring(num)}"
-    (corners_in_current_ring(num).include? num) || num == 2
+    corners_in_current_ring(num).include? num
   end
 
 
