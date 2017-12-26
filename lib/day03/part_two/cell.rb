@@ -7,7 +7,6 @@ class Cell
     @grid = grid
 
     calculate_value
-    grid.cells << self
   end
 
   def calculate_value

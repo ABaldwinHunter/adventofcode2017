@@ -15,6 +15,8 @@ class Grid
     end
   end
 
+  private
+
   def cell(coordinates)
     x = coordinates[0]
     y = coordinates[1]
