@@ -35,7 +35,7 @@ class Builder
   def initialize(num)
     @grid = Grid.new
     @current_coordinates = [0, 0]
-    @current_direction = EAST # start out going East
+    @current_direction = SOUTH
     @stopping = num
 
     add_cell
@@ -43,7 +43,7 @@ class Builder
   end
 
   def build
-    while current_cell.value < stopping && position < 20
+    while current_cell.value < stopping
       move
       add_cell
       print_progress
@@ -85,7 +85,10 @@ class Builder
   end
 
   def change_direction
-    current_direction = next_counter_clockwise
+    puts "changing direction!"
+    puts "old = #{current_direction}"
+    @current_direction = next_counter_clockwise
+    puts "new = #{current_direction}"
   end
 
     def next_counter_clockwise
@@ -100,7 +103,7 @@ class Builder
   def at_corner?(num = position)
     puts "position is #{num}"
     puts "corners in current ring: #{corners_in_current_ring(num)}"
-    corners_in_current_ring(num).include? num && num != 1
+    (corners_in_current_ring(num).include? num) || num == 2
   end
 
 
@@ -122,14 +125,16 @@ class Builder
     square = root**2
 
     corners = [
-      square,
-      square - root / 2 - 1,
-      square - (root / 2) * 3 - 1,
-      square - (root / 2) * 5 - 1,
+      square - (root - 1),
+      square - (root - 1) * 2,
+      square - (root - 1) * 3,
+      # we actually turn at 1 _after_ the corner of a square ring at perfect square
+      # corner
+      square - (root - 1) * 4 + 1,
     ]
   end
 end
 
-# builder = Builder.new(40)
+builder = Builder.new(40)
 
-# require 'pry'; binding.pry
+require 'pry'; binding.pry
