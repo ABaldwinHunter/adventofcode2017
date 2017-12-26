@@ -48,14 +48,10 @@ class Builder
       add_cell
       print_progress
     end
-
-    puts "*"*80
-    puts "Done!"
   end
 
   def move
     if at_corner?
-      puts "*"*900
       change_direction
     end
 
@@ -134,7 +130,3 @@ class Builder
     ]
   end
 end
-
-builder = Builder.new(40)
-
-require 'pry'; binding.pry
