@@ -1,27 +1,22 @@
 class Cell
-  attr_reader :x, :y, :value
+  attr_reader :x, :y, :grid
 
   def initialize(coordinates, grid)
     @x = coordinates[0]
     @y = coordinates[1]
     @grid = grid
 
-    calculate_value
+    value
   end
 
-  def calculate_value
-    if grid.cells.empty?
-      puts "grid cells empty"
-      @value = 1
-    else
-      @value = sum_neighbors
-    end
+  def value
+    @value ||= calculate_value
   end
 
   def sum_neighbors
     neighbor_coordinates.map { |co|
       val = grid.value(co)
-      puts "val of neighbor is: #{val}"
+      puts "val of neighbor at #{co} is: #{val}"
       val
     }.inject(:+)
   end
@@ -41,6 +36,13 @@ class Cell
 
   private
 
-  attr_reader :grid
+  def calculate_value
+    if grid.cells.empty?
+      puts "grid cells empty"
+      1
+    else
+      sum_neighbors
+    end
+  end
 end
 
