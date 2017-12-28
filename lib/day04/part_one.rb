@@ -22,10 +22,18 @@ class PassPhrase
     words.length == words.uniq.length
   end
 
+  def valid_non_anagram?
+    sorted_words.length == sorted_words.uniq.length
+  end
+
   private
 
   def words
     @words ||= line.split(" ")
+  end
+
+  def sorted_words
+    @sorted_words ||= words.map { |word| word.split("").sort!.join }
   end
 end
 
@@ -33,6 +41,7 @@ input = File.read("./lib/day04/input.txt")
 lines = input.split("\n")
 
 valid = lines.select { |l| PassPhrase.new(l).valid? }.count
+sorted_valid = lines.select { |l| PassPhrase.new(l).valid_non_anagram? }.count
 
 require 'pry'; binding.pry
 
